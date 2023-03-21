@@ -118,6 +118,7 @@ public class AVLTree {
 
 	// rebalance the tree
 	//this is where all the rotations occur
+	//make sure to include the "node" or the title, author and/or ISBN
 	void rebalance(Node node) {
 		if (node.bf > 0) {
 			if (node.right.bf < 0) {
