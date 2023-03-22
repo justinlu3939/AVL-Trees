@@ -1,0 +1,19 @@
+class Node {
+	int isbn; // holds the key
+	Node parent; // pointer to the parent
+	Node left; // pointer to left child
+	Node right; // pointer to right child
+	int bf; // balance factor of the node
+	String author;
+	String title;
+
+	public Node(int isbn, String author, String title) {
+		this.isbn = isbn;
+		this.parent = null;
+		this.left = null;
+		this.right = null;
+		this.bf = 0;
+		this.author = author;
+		this.title = title;
+	}
+}
