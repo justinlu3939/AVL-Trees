@@ -4,39 +4,23 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-// isbn structure that represents a node in the tree
-class Node {
-	long isbn; // holds the key
-	Node parent; // pointer to the parent
-	Node left; // pointer to left child
-	Node right; // pointer to right child
-	int bf; // balance factor of the node
-	String author;
-	String title;
-	
-	//delete this segment of code
-	/*
-	public Node(int isbn)
-	{
-		this.isbn = isbn;
-		this.parent = null;
-		this.left = null;
-		this.right = null;
-		this.bf = 0;
-		this.author = "";
-		this.title = "";
-	}*/
-	
-	public Node(long isbn, String author, String title) {
-		this.isbn = isbn;
-		this.parent = null;
-		this.left = null;
-		this.right = null;
-		this.bf = 0;
-		this.author = author;
-		this.title = title;
-	}
+// isbn structure that represents a AVLNode in the tree
+class AVLNode {
+Book bookObject; 
+	int bf; //changed from int height
+	AVLNode leftPTR;
+	AVLNode rightPTR;
+	AVLNode parent;
+  public AVLNode(long isbn, String author, String title)
+  {
+    bookObject = new Book(isbn, title, author);
+    leftPTR = null;
+    rightPTR = null;
+    parent = null;
+    bf = 0;
+  }
 }
+
 class Book
 {
     private long isbn;
@@ -54,19 +38,23 @@ class Book
 	    this.title = title;
 	    this.author = author;
 	}
-	public long returnISBN()
+	public void setISBN(long isbn)
+	{
+		this.isbn = isbn;
+	}
+	public long getISBN()
 	{
 	    return isbn;
 	}
-	public String returnTitle()
+	public String getTitle()
 	{
 	    return title;
 	}
-	public String returnAuthor()
+	public String getAuthor()
 	{
 	    return author;
 	}
-	public void returnAllAttributesConsole()
+	public void getAllAttributesConsole()
 	{
 	    System.out.println(isbn);
 	    System.out.println(title);
@@ -75,13 +63,13 @@ class Book
 }
 
 public class AVLTree {
-	private Node root;
+	private AVLNode root;
 
 	public AVLTree() {
 		root = null;
 	}
 
-	private void printHelper(Node currPtr, String indent, boolean last) {
+	private void printHelper(AVLNode currPtr, String indent, boolean last) {
 		// print the tree structure on the screen
 	   	if (currPtr != null) {
 		   System.out.print(indent);
@@ -93,53 +81,53 @@ public class AVLTree {
 		      indent += "|    ";
 		   }
 
-		   System.out.println(currPtr.title + "(BF = " + currPtr.bf + ")");
+		   System.out.println(currPtr.bookObject.getTitle() + "(BF = " + currPtr.bf + ")");
 
-		   printHelper(currPtr.left, indent, false);
-		   printHelper(currPtr.right, indent, true);
+		   printHelper(currPtr.leftPTR, indent, false);
+		   printHelper(currPtr.rightPTR, indent, true);
 		}
 	}
 
-	private Node searchTreeHelper(Node node, int key) {
-		if (node == null || key == node.isbn) {
-			return node;
+	private AVLNode searchTreeHelper(AVLNode AVLNode, int key) {
+		if (AVLNode == null || key == AVLNode.bookObject.getISBN()) {
+			return AVLNode;
 		}
 
-		if (key < node.isbn) {
-			return searchTreeHelper(node.left, key);
+		if (key < AVLNode.bookObject.getISBN()) {
+			return searchTreeHelper(AVLNode.leftPTR, key);
 		}
-		return searchTreeHelper(node.right, key);
+		return searchTreeHelper(AVLNode.rightPTR, key);
 	}
 
-	private Node deleteNodeHelper(Node node, int key) {
+	private AVLNode deleteAVLNodeHelper(AVLNode AVLNode, int key) {
 		// search the key
-		if (node == null) return node;
-		else if (key < node.isbn) node.left = deleteNodeHelper(node.left, key);
-		else if (key > node.isbn) node.right = deleteNodeHelper(node.right, key);
+		if (AVLNode == null) return AVLNode;
+		else if (key < AVLNode.bookObject.getISBN()) AVLNode.leftPTR = deleteAVLNodeHelper(AVLNode.leftPTR, key);
+		else if (key > AVLNode.bookObject.getISBN()) AVLNode.rightPTR = deleteAVLNodeHelper(AVLNode.rightPTR, key);
 		else {
 			// the key has been found, now delete it
 
-			// case 1: node is a leaf node
-			if (node.left == null && node.right == null) {
-				node = null;
+			// case 1: AVLNode is a leaf AVLNode
+			if (AVLNode.leftPTR == null && AVLNode.rightPTR == null) {
+				AVLNode = null;
 			}
 
-			// case 2: node has only one child
-			else if (node.left == null) {
-				Node temp = node;
-				node = node.right;
+			// case 2: AVLNode has only one child
+			else if (AVLNode.leftPTR == null) {
+				AVLNode temp = AVLNode;
+				AVLNode = AVLNode.rightPTR;
 			}
 
-			else if (node.right == null) {
-				Node temp = node;
-				node = node.left;
+			else if (AVLNode.rightPTR == null) {
+				AVLNode temp = AVLNode;
+				AVLNode = AVLNode.leftPTR;
 			}
 
 			// case 3: has both children
 			else {
-				Node temp = minimum(node.right);
-				node.isbn = temp.isbn;
-				node.right = deleteNodeHelper(node.right, temp.isbn);
+				AVLNode temp = minimum(AVLNode.rightPTR);
+				AVLNode.bookObject.setISBN(temp.bookObject.getISBN());
+				AVLNode.rightPTR = deleteAVLNodeHelper(AVLNode.rightPTR, temp.bookObject.getISBN());
 			}
 
 		}
@@ -147,151 +135,151 @@ public class AVLTree {
 		// Write the update balance logic here
 		// YOUR CODE HERE
 
-		return node;
+		return AVLNode;
 	}
 
-	// update the balance factor the node
-	private void updateBalance(Node node) {
-		if (node.bf < -1 || node.bf > 1) {
-			rebalance(node);
+	// update the balance factor the AVLNode
+	private void updateBalance(AVLNode AVLNode) {
+		if (AVLNode.bf < -1 || AVLNode.bf > 1) {
+			rebalance(AVLNode);
 			return;
 		}
 
-		if (node.parent != null) {
-			if (node == node.parent.left) {
-				node.parent.bf -= 1;
+		if (AVLNode.parent != null) {
+			if (AVLNode == AVLNode.parent.leftPTR) {
+				AVLNode.parent.bf -= 1;
 			}
 
-			if (node == node.parent.right) {
-				node.parent.bf += 1;
+			if (AVLNode == AVLNode.parent.rightPTR) {
+				AVLNode.parent.bf += 1;
 			}
 
-			if (node.parent.bf != 0) {
-				updateBalance(node.parent);
+			if (AVLNode.parent.bf != 0) {
+				updateBalance(AVLNode.parent);
 			}
 		}
 	}
 
 	// rebalance the tree
 	//this is where all the rotations occur
-	//make sure to include the "node" or the title, author and/or ISBN
-	void rebalance(Node node) {
-		if (node.bf > 0) {
-			if (node.right.bf < 0) {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + node.isbn + "; fixed in RightLeft Rotation");
-				rightRotate(node.right);
-				leftRotate(node);
+	//make sure to include the "AVLNode" or the title, author and/or ISBN
+	void rebalance(AVLNode AVLNode) {
+		if (AVLNode.bf > 0) {
+			if (AVLNode.rightPTR.bf < 0) {
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in rightPTRleftPtr Rotation");
+				rightPTRRotate(AVLNode.rightPTR);
+				leftPtrRotate(AVLNode);
 			} else {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + node.isbn + "; fixed in Left Rotation");
-				leftRotate(node);
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in leftPtr Rotation");
+				leftPtrRotate(AVLNode);
 			}
-		} else if (node.bf < 0) {
-			if (node.left.bf > 0) {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + node.isbn + "; fixed in LeftRight Rotation");
-				leftRotate(node.left);
-				rightRotate(node);
+		} else if (AVLNode.bf < 0) {
+			if (AVLNode.leftPTR.bf > 0) {
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in leftPtrrightPTR Rotation");
+				leftPtrRotate(AVLNode.leftPTR);
+				rightPTRRotate(AVLNode);
 			} else {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + node.isbn + "; fixed in Right Rotation");
-				rightRotate(node);
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in rightPTR Rotation");
+				rightPTRRotate(AVLNode);
 			}
 		}
 	}
 
 
-	private void preOrderHelper(Node node) {
-		if (node != null) {
-			System.out.print(node.isbn + " ");
-			preOrderHelper(node.left);
-			preOrderHelper(node.right);
+	private void preOrderHelper(AVLNode AVLNode) {
+		if (AVLNode != null) {
+			System.out.print(AVLNode.bookObject.getISBN() + " ");
+			preOrderHelper(AVLNode.leftPTR);
+			preOrderHelper(AVLNode.rightPTR);
 		}
 	}
 
-	private void inOrderHelper(Node node) {
-		if (node != null) {
-			inOrderHelper(node.left);
-			System.out.print(node.isbn + " ");
-			inOrderHelper(node.right);
+	private void inOrderHelper(AVLNode AVLNode) {
+		if (AVLNode != null) {
+			inOrderHelper(AVLNode.leftPTR);
+			System.out.print(AVLNode.bookObject.getISBN() + " ");
+			inOrderHelper(AVLNode.rightPTR);
 		}
 	}
 
-	private void postOrderHelper(Node node) {
-		if (node != null) {
-			postOrderHelper(node.left);
-			postOrderHelper(node.right);
-			System.out.print(node.isbn + " ");
+	private void postOrderHelper(AVLNode AVLNode) {
+		if (AVLNode != null) {
+			postOrderHelper(AVLNode.leftPTR);
+			postOrderHelper(AVLNode.rightPTR);
+			System.out.print(AVLNode.bookObject.getISBN() + " ");
 		}
 	}
 
 	// Pre-Order traversal
-	// Node.Left Subtree.Right Subtree
+	// AVLNode.leftPtr Subtree.rightPTR Subtree
 	public void preorder() {
 		preOrderHelper(this.root);
 	}
 
 	// In-Order traversal
-	// Left Subtree . Node . Right Subtree
+	// leftPtr Subtree . AVLNode . rightPTR Subtree
 	public void inorder() {
 		inOrderHelper(this.root);
 	}
 
 	// Post-Order traversal
-	// Left Subtree . Right Subtree . Node
+	// leftPtr Subtree . rightPTR Subtree . AVLNode
 	public void postorder() {
 		postOrderHelper(this.root);
 	}
 
 	// search the tree for the key k
-	// and return the corresponding node
-	public Node searchTree(int k) {
+	// and return the corresponding AVLNode
+	public AVLNode searchTree(int k) {
 		return searchTreeHelper(this.root, k);
 	}
 
-	// find the node with the minimum key
-	public Node minimum(Node node) {
-		while (node.left != null) {
-			node = node.left;
+	// find the AVLNode with the minimum key
+	public AVLNode minimum(AVLNode AVLNode) {
+		while (AVLNode.leftPTR != null) {
+			AVLNode = AVLNode.leftPTR;
 		}
-		return node;
+		return AVLNode;
 	}
 
-	// find the node with the maximum key
-	public Node maximum(Node node) {
-		while (node.right != null) {
-			node = node.right;
+	// find the AVLNode with the maximum key
+	public AVLNode maximum(AVLNode AVLNode) {
+		while (AVLNode.rightPTR != null) {
+			AVLNode = AVLNode.rightPTR;
 		}
-		return node;
+		return AVLNode;
 	}
 
-	// find the successor of a given node
-	public Node successor(Node x) {
-		// if the right subtree is not null,
-		// the successor is the leftmost node in the
-		// right subtree
-		if (x.right != null) {
-			return minimum(x.right);
+	// find the successor of a given AVLNode
+	public AVLNode successor(AVLNode x) {
+		// if the rightPTR subtree is not null,
+		// the successor is the leftPtrmost AVLNode in the
+		// rightPTR subtree
+		if (x.rightPTR != null) {
+			return minimum(x.rightPTR);
 		}
 
 		// else it is the lowest ancestor of x whose
-		// left child is also an ancestor of x.
-		Node y = x.parent;
-		while (y != null && x == y.right) {
+		// leftPtr child is also an ancestor of x.
+		AVLNode y = x.parent;
+		while (y != null && x == y.rightPTR) {
 			x = y;
 			y = y.parent;
 		}
 		return y;
 	}
 
-	// find the predecessor of a given node
-	public Node predecessor(Node x) {
-		// if the left subtree is not null,
-		// the predecessor is the rightmost node in the
-		// left subtree
-		if (x.left != null) {
-			return maximum(x.left);
+	// find the predecessor of a given AVLNode
+	public AVLNode predecessor(AVLNode x) {
+		// if the leftPtr subtree is not null,
+		// the predecessor is the rightPTRmost AVLNode in the
+		// leftPtr subtree
+		if (x.leftPTR != null) {
+			return maximum(x.leftPTR);
 		}
 
-		Node y = x.parent;
-		while (y != null && x == y.left) {
+		AVLNode y = x.parent;
+		while (y != null && x == y.leftPTR) {
 			x = y;
 			y = y.parent;
 		}
@@ -299,22 +287,22 @@ public class AVLTree {
 		return y;
 	}
 
-	// rotate left at node x
-	void leftRotate(Node x) {
-		Node y = x.right;
-		x.right = y.left;
-		if (y.left != null) {
-			y.left.parent = x;
+	// rotate leftPtr at AVLNode x
+	void leftPtrRotate(AVLNode x) {
+		AVLNode y = x.rightPTR;
+		x.rightPTR = y.leftPTR;
+		if (y.leftPTR != null) {
+			y.leftPTR.parent = x;
 		}
 		y.parent = x.parent;
 		if (x.parent == null) {
 			this.root = y;
-		} else if (x == x.parent.left) {
-			x.parent.left = y;
+		} else if (x == x.parent.leftPTR) {
+			x.parent.leftPTR = y;
 		} else {
-			x.parent.right = y;
+			x.parent.rightPTR = y;
 		}
-		y.left = x;
+		y.leftPTR = x;
 		x.parent = y;
 
 		// update the balance factor
@@ -322,22 +310,22 @@ public class AVLTree {
 		y.bf = y.bf - 1 + Math.min(0, x.bf);
 	}
 
-	// rotate right at node x
-	void rightRotate(Node x) {
-		Node y = x.left;
-		x.left = y.right;
-		if (y.right != null) {
-			y.right.parent = x;
+	// rotate rightPTR at AVLNode x
+	void rightPTRRotate(AVLNode x) {
+		AVLNode y = x.leftPTR;
+		x.leftPTR = y.rightPTR;
+		if (y.rightPTR != null) {
+			y.rightPTR.parent = x;
 		}
 		y.parent = x.parent;
 		if (x.parent == null) {
 			this.root = y;
-		} else if (x == x.parent.right) {
-			x.parent.right = y;
+		} else if (x == x.parent.rightPTR) {
+			x.parent.rightPTR = y;
 		} else {
-			x.parent.left = y;
+			x.parent.leftPTR = y;
 		}
-		y.right = x;
+		y.rightPTR = x;
 		x.parent = y;
 
 		// update the balance factor
@@ -349,36 +337,36 @@ public class AVLTree {
 	// insert the key to the tree in its appropriate position
 	public void insert(long isbn, String title, String author) {
 		// PART 1: Ordinary BST insert
-		Node node = new Node(isbn, title, author);
-		Node y = null;
-		Node x = this.root;
+		AVLNode AVLNode = new AVLNode(isbn, title, author);
+		AVLNode y = null;
+		AVLNode x = this.root;
 
 		while (x != null) {
 			y = x;
-			if (node.isbn < x.isbn) {
-				x = x.left;
+			if (AVLNode.bookObject.getISBN() < x.bookObject.getISBN()) {
+				x = x.leftPTR;
 			} else {
-				x = x.right;
+				x = x.rightPTR;
 			}
 		}
 
 		// y is parent of x
-		node.parent = y;
+		AVLNode.parent = y;
 		if (y == null) {
-			root = node;
-		} else if (node.isbn < y.isbn) {
-			y.left = node;
+			root = AVLNode;
+		} else if (AVLNode.bookObject.getISBN() < y.bookObject.getISBN()) {
+			y.leftPTR = AVLNode;
 		} else {
-			y.right = node;
+			y.rightPTR = AVLNode;
 		}
 
-		// PART 2: re-balance the node if necessary
-		updateBalance(node);
+		// PART 2: re-balance the AVLNode if necessary
+		updateBalance(AVLNode);
 	}
 
-	// delete the node from the tree
-	Node deleteNode(int isbn) {
-		return deleteNodeHelper(this.root, isbn);
+	// delete the AVLNode from the tree
+	AVLNode deleteAVLNode(int isbn) {
+		return deleteAVLNodeHelper(this.root, isbn);
 	}
 
 	// print the tree structure on the screen
