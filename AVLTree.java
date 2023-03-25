@@ -81,7 +81,7 @@ public class AVLTree {
 		      indent += "|    ";
 		   }
 
-		   System.out.println(currPtr.bookObject.getTitle() + "(BF = " + currPtr.bf + ")");
+		   System.out.println(currPtr.bookObject.getTitle() + currPtr.bookObject.getAuthor() + "(BF = " + currPtr.bf + ")");
 
 		   printHelper(currPtr.leftPTR, indent, false);
 		   printHelper(currPtr.rightPTR, indent, true);
@@ -168,13 +168,13 @@ public class AVLTree {
 		if (AVLNode.bf > 0) {
 			//more on the right
 			if (AVLNode.rightPTR.bf < 0) {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in RightLeft Rotation at ISBN " + AVLNode.rightPTR.isbn);
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in RightLeft Rotation at ISBN " + AVLNode.bookObject.getISBN());
 				rightPTRRotate(AVLNode.rightPTR);
 				leftPtrRotate(AVLNode);
 			}
 			//more on the left
 			else {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in Left Rotation at ISBN " + AVLNode.leftPTR.isbn);
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in Left Rotation at ISBN " + AVLNode.bookObject.getISBN());
 				leftPtrRotate(AVLNode);
 			}
 		}
@@ -182,13 +182,13 @@ public class AVLTree {
 		else if (AVLNode.bf < 0) {
 			//more on the left
 			if (AVLNode.leftPTR.bf > 0) {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in LeftRight Rotation at ISBN " + AVLNode.);
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in LeftRight Rotation at ISBN " + AVLNode.bookObject.getISBN());
 				leftPtrRotate(AVLNode.leftPTR);
 				rightPTRRotate(AVLNode);
 			}
 			//more on the right
 			else {
-			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in Right Rotation at ISBN " + AVLNode.);
+			    System.out.println("Imbalance condition occurred at inserting ISBN " + AVLNode.bookObject.getISBN() + "; fixed in Right Rotation at ISBN " + AVLNode.bookObject.getISBN());
 				rightPTRRotate(AVLNode);
 			}
 		}
