@@ -88,7 +88,7 @@ public class AVLTree {
 		}
 	}
 
-	private AVLNode searchTreeHelper(AVLNode AVLNode, int key) {
+	private AVLNode searchTreeHelper(AVLNode AVLNode, long key) {
 		if (AVLNode == null || key == AVLNode.bookObject.getISBN()) {
 			return AVLNode;
 		}
@@ -239,7 +239,7 @@ public class AVLTree {
 
 	// search the tree for the key k
 	// and return the corresponding AVLNode
-	public AVLNode searchTree(int k) {
+	public AVLNode searchTree(long k) {
 		return searchTreeHelper(this.root, k);
 	}
 
@@ -374,7 +374,7 @@ public class AVLTree {
 	}
 
 	// delete the AVLNode from the tree
-	AVLNode deleteAVLNode(int isbn) {
+	AVLNode deleteAVLNode(long isbn) {
 		return deleteAVLNodeHelper(this.root, isbn);
 	}
 
@@ -415,17 +415,6 @@ public class AVLTree {
 		}
 	}
 	public static void main(String [] args) {
-		/*
-    	bst.insert(1);
-    	bst.insert(2);
-    	bst.insert(3);
-    	bst.insert(4);
-    	bst.insert(5);
-    	bst.insert(6);
-    	bst.insert(7);
-    	bst.insert(8);
-    	bst.prettyPrint();
-    	*/
 		readFile("booklist.txt");
 	}
 }
